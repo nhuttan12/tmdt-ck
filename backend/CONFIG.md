@@ -39,8 +39,8 @@ volumes:
   mysql_data:                                # Khai báo volume tên là mysql_data
 ```
 
-Sau đó mở terminal với đuôi đường dẫn là ..\tmdt-ck\backend> hoặc là ..\tmdt-ck> và gõ câu lệnh sau, để thực hiện thiết lặp môi trường cho database
+Sau đó mở terminal với đuôi đường dẫn là ..\tmdt-ck\backend> và gõ câu lệnh sau, để thực hiện thiết lặp môi trường cho database
 
 ```bash
-  docker compose  up -d
+docker compose  up -d
 ```
