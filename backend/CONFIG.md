@@ -8,6 +8,12 @@ File `config.env.yaml` chứa các thông số cấu hình cho hệ thống, bao
 http:
   host: 'localhost'     # Địa chỉ host mà server sẽ lắng nghe
   port: 8080            # Cổng server chạy ứng dụng NestJS
+  jwtKey: 'sercretkey' 
+  expireTime: '60s'
+  cloudinary:
+    name: 'dt3yrf9sx'
+    api_key: '178161493966793'
+    api_secret: 'VfqWtBGWC21t9ND0isu-fp1JIoE'
 
 db:
   mysql:
