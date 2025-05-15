@@ -6,14 +6,17 @@ File `config.env.yaml` chứa các thông số cấu hình cho hệ thống, bao
 
 ```yaml
 http:
-  host: 'localhost'     # Địa chỉ host mà server sẽ lắng nghe
-  port: 8080            # Cổng server chạy ứng dụng NestJS
+  host: 'localhost'    
+  port: 8080           
   jwtKey: 'sercretkey' 
   expireTime: '60s'
   cloudinary:
     name: 'dt3yrf9sx'
     api_key: '178161493966793'
     api_secret: 'VfqWtBGWC21t9ND0isu-fp1JIoE'
+  mail:
+    app_password: 'dnop wxyz dtsv mptr'
+    email: 'phamnhuttan.9a6.2017@gmail.com'
 
 db:
   mysql:
@@ -23,6 +26,11 @@ db:
     dialect: 'mysql'    # Kiểu cơ sở dữ liệu (ví dụ: mysql, postgres, v.v.)
     username: 'root'    # Tên đăng nhập MySQL
     password: ''        # Mật khẩu MySQL nếu chạy docker theo bước ở dưới thì đổi password thành '123456'
+
+domain:
+  client_1: 
+    host: 'localhost'
+    port: 3000
 ```
 
 Nếu như không sử dụng xampp hoặc laragon, ... thì có thể xử dụng docker để chạy môi trường database
