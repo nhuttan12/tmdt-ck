@@ -31,6 +31,7 @@ domain:
   client_1: 
     host: 'localhost'
     port: 3000
+    reset_password: 'reset-password'
 ```
 
 Nếu như không sử dụng xampp hoặc laragon, ... thì có thể xử dụng docker để chạy môi trường database
