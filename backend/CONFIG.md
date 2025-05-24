@@ -6,9 +6,9 @@ File `config.env.yaml` chứa các thông số cấu hình cho hệ thống, bao
 
 ```yaml
 http:
-  host: 'localhost'    
-  port: 8080           
-  jwtKey: 'sercretkey' 
+  host: 'localhost'
+  port: 8080
+  jwtKey: 'sercretkey'
   expireTime: '60s'
   cloudinary:
     name: 'dt3yrf9sx'
@@ -20,15 +20,15 @@ http:
 
 db:
   mysql:
-    host: 'localhost'   # Host của MySQL
-    port: 3306          # Port MySQL
+    host: 'localhost' # Host của MySQL
+    port: 3306 # Port MySQL
     database: 'tmdt-ck' # Tên database sử dụng
-    dialect: 'mysql'    # Kiểu cơ sở dữ liệu (ví dụ: mysql, postgres, v.v.)
-    username: 'root'    # Tên đăng nhập MySQL
-    password: ''        # Mật khẩu MySQL nếu chạy docker theo bước ở dưới thì đổi password thành '123456'
+    dialect: 'mysql' # Kiểu cơ sở dữ liệu (ví dụ: mysql, postgres, v.v.)
+    username: 'root' # Tên đăng nhập MySQL
+    password: '' # Mật khẩu MySQL nếu chạy docker theo bước ở dưới thì đổi password thành '123456'
 
 domain:
-  client_1: 
+  client_1:
     host: 'localhost'
     port: 3000
     reset_password: 'reset-password'
@@ -40,18 +40,18 @@ Nếu như không sử dụng xampp hoặc laragon, ... thì có thể xử dụ
 
 ```yaml
 services:
-  db: 
-    image: mysql:8.0.32                      # Sử dụng image MySQL 8.0.32 từ Docker Hub
-    container_name: tmdt_ck                  # Đặt tên container là 'tmdt_ck'
+  db:
+    image: mysql:8.0.32 # Sử dụng image MySQL 8.0.32 từ Docker Hub
+    container_name: tmdt_ck # Đặt tên container là 'tmdt_ck'
     environment:
-      MYSQL_ROOT_PASSWORD: 123456            # Mật khẩu cho user root của MySQL
+      MYSQL_ROOT_PASSWORD: 123456 # Mật khẩu cho user root của MySQL
     ports:
-      - '3306:3306'                          # Mở cổng 3306 để máy host có thể truy cập MySQL
+      - '3306:3306' # Mở cổng 3306 để máy host có thể truy cập MySQL
     volumes:
-      - mysql_data:/var/lib/postgresql/data  # Lưu trữ data vào volume để tránh mất dữ liệu khi container bị xóa
+      - mysql_data:/var/lib/postgresql/data # Lưu trữ data vào volume để tránh mất dữ liệu khi container bị xóa
 
 volumes:
-  mysql_data:                                # Khai báo volume tên là mysql_data
+  mysql_data: # Khai báo volume tên là mysql_data
 ```
 
 Sau đó mở terminal với đuôi đường dẫn là ..\tmdt-ck\backend> và gõ câu lệnh sau, để thực hiện thiết lặp môi trường cho database
