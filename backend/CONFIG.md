@@ -9,7 +9,7 @@ http:
   host: 'localhost'
   port: 8080
   jwtKey: 'sercretkey'
-  expireTime: '60s'
+  expireTime: '60m'
   cloudinary:
     name: 'dt3yrf9sx'
     api_key: '178161493966793'
@@ -17,21 +17,28 @@ http:
   mail:
     app_password: 'dnop wxyz dtsv mptr'
     email: 'phamnhuttan.9a6.2017@gmail.com'
+  paypal:
+    client_id: 'AUUsF0rIyWWPRILA7ua2aNMSrYAmk0UV59mX9dyDB9di0O8cX6TETBloi3AapXmnjIu5sSx5etbfSDZ4'
+    secret: 'EBvInjjfqSxyxVyYh8umTB28AnNgYJ9-P3YyxHc0x2uiY83Lb9yu_9f5Am1tXRILum0oXQyKG6gZUrA7'
+    environtment: 'sandbox'
+  stripe: 
+    public_key: 'pk_test_51RVrgGEPzbkLi7YWoGqcztUn5nIc0nkf01SOaJl1rr1O7PI0kL4ADmkFsz8lHdZSqRDkxucCODxqgZ9GKdJ0eRI8009RhisaVg'
+    secret_key: 'sk_test_51RVrgGEPzbkLi7YW3uDEwUvLLNxmYmG7epIOwZxcpbSPW9AhYt6H0gRTPrFYbtQaQc5xj5zRXeu79EyTphUa6zgv006psJyLch'
 
 db:
   mysql:
-    host: 'localhost' # Host của MySQL
-    port: 3306 # Port MySQL
-    database: 'tmdt-ck' # Tên database sử dụng
-    dialect: 'mysql' # Kiểu cơ sở dữ liệu (ví dụ: mysql, postgres, v.v.)
-    username: 'root' # Tên đăng nhập MySQL
-    password: '' # Mật khẩu MySQL nếu chạy docker theo bước ở dưới thì đổi password thành '123456'
+    host: 'localhost'
+    port: 3306
+    database: 'tmdt-ck'
+    dialect: 'mysql'
+    username: 'root'
+    password: '123456'
 
 domain:
-  client_1:
-    host: 'localhost'
+  client_1: 
+    host: 'http://localhost'
     port: 3000
-    reset_password: 'reset-password'
+    reset_password: 'forgot-password'
 ```
 
 Nếu như không sử dụng xampp hoặc laragon, ... thì có thể xử dụng docker để chạy môi trường database
