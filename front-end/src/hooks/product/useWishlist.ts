@@ -12,6 +12,10 @@ interface WishlistItem {
   status: any;        // null hoặc gì đó
   created_at: string;
   updated_at: string;
+  name: string;
+  description: string;
+  price: number;
+  thumbnailUrl: string;
   // Nếu cần có thêm thông tin product, có thể fetch riêng
 }
 
@@ -29,21 +33,33 @@ export function useWishlist(token: string): UseWishlistResult {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetch = useCallback(
-    async (page = 1, limit = 10) => {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await getWishlistProducts(token, page, limit);
-        setWishlistItems(res.data ?? []);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [token]
-  );
+ const fetch = useCallback(
+  async (page = 1, limit = 1000) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await getWishlistProducts(token, page, limit);
+
+      console.log("📥 Raw wishlist data (1st item):", res.data?.[0]);
+
+      const mappedItems = (res.data ?? []).map((item: any) => ({
+        ...item,
+        productId: item.product?.id, // Nếu product không tồn tại thì vẫn undefined
+      }));
+
+      console.log("✅ Wishlist items sau khi mapping:", mappedItems);
+
+      setWishlistItems(mappedItems);
+    } catch (err) {
+      setError(err as Error);
+    } finally {
+      setLoading(false);
+    }
+  },
+  [token]
+);
+
+
 
   const add = useCallback(
     async (productId: number): Promise<WishlistItem | undefined> => {
