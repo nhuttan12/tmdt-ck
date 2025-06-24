@@ -10,6 +10,7 @@ import { IoSearchCircle } from "react-icons/io5";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useCartContext } from "../../../contexts/CartContext";
 
+
 const Header: React.FC = () => {
   const navLinks = [
     { to: "/", label: "Trang chủ" },

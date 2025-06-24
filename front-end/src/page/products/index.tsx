@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Navigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { Navigate } from "react-router-dom";
 import Header from "../../components/layout/header/header";
 import Footer from "../../components/layout/footer/footer";
 import HeroSection from "../../components/common/HeroSection";
@@ -29,16 +29,21 @@ const Products: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
-  // Lấy token đúng cách (context, redux, localStorage ...)
   const {
-  wishlistItems,
-  add,
-  remove,
-  fetch: fetchWishlist,
-  loading: wishlistLoading,
-  error: wishlistError,
-} = useWishlist(token);
- 
+    wishlistItems,
+    add,
+    remove,
+    fetch: fetchWishlist,
+    loading: wishlistLoading,
+    error: wishlistError,
+  } = useWishlist(token);
+
+  // Fetch wishlist khi component mount
+ useEffect(() => {
+  fetchWishlist(1, 1000); // 🛠 Tăng limit để đảm bảo không bị thiếu item
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
+
   // Filter categories
   const [filterCategories, setFilterCategories] = useState<FilterCategory[]>([
     { id: 1, name: "Nội thất", count: 21, checked: false },
@@ -79,7 +84,7 @@ const Products: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const limit = 12; // items per page
 
-  // lấy products từ hook
+  // Lấy products từ hook
   const {
     products: productsFromHook,
     loading,
@@ -89,27 +94,26 @@ const Products: React.FC = () => {
   // Quản lý local state products để cập nhật isFavorite, wishlistId
   const [products, setProducts] = useState<Product[]>([]);
 
-  // Đồng bộ products từ hook về state local
-// Đồng bộ products với wishlistItems khi productsFromHook hoặc wishlistItems thay đổi
-React.useEffect(() => {
-  const updatedProducts = productsFromHook.map(product => {
-    const wishItem = wishlistItems.find(w => w.productId === product.id);
+  // Đồng bộ products với wishlistItems khi productsFromHook hoặc wishlistItems thay đổi
+  useEffect(() => {
+  const updatedProducts = productsFromHook.map((product) => {
+    const wishItem = wishlistItems.find((w) => w.id === product.id); // 👈 SỬA DÒNG NÀY
     return {
       ...product,
       isFavorite: !!wishItem,
       wishlistId: wishItem ? wishItem.id : undefined,
     };
   });
+  console.log('📦 All Products:', productsFromHook.map(p => p.id));
+  console.log('❤️ Wishlist ProductIds:', wishlistItems.map(w => w.id));
   setProducts(updatedProducts);
 }, [productsFromHook, wishlistItems]);
 
-
-  // Bạn có thể lấy totalPages và totalResults từ API trả về nếu có, hoặc tạm giả định
-  const totalResults = products.length; // tạm thời là số lượng hiện tại
+  // Tính tổng trang và kết quả (tạm)
+  const totalResults = products.length;
   const totalPages = Math.ceil(totalResults / limit) || 1;
 
-  // Các hàm xử lý filter, sort, page change (giữ nguyên hoặc tùy chỉnh theo API)
-
+  // Xử lý các filter
   const handleCategoryChange = (id: number) => {
     setFilterCategories(
       filterCategories.map((category) =>
@@ -142,12 +146,12 @@ React.useEffect(() => {
 
   const handleApplyFilters = () => {
     console.log("Applying filters...");
-    // TODO: Gọi API filter nếu có
+    // TODO: gọi API lọc nếu có
   };
 
   const handleSortChange = (value: string) => {
     console.log("Sort changed to:", value);
-    // TODO: Xử lý sort khi gọi API
+    // TODO: xử lý sort nếu có API
   };
 
   const handlePageChange = (page: number) => {
@@ -155,9 +159,10 @@ React.useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // Xử lý toggle yêu thích
   const handleFavoriteToggle = async (id: number) => {
   try {
-    const product = products.find(p => p.id === id);
+    const product = products.find((p) => p.id === id);
     if (!product) return;
 
     if (product.isFavorite) {
@@ -170,12 +175,18 @@ React.useEffect(() => {
       await add(id);
     }
 
-    // Sau khi thay đổi favorite, fetch lại wishlist để cập nhật state
     await fetchWishlist();
-  } catch (e) {
-    console.error("Failed to toggle favorite:", e);
+  } catch (e: any) {
+    if (e.response && e.response.status === 409) {
+      // Sản phẩm đã có trong wishlist rồi
+      console.warn("Sản phẩm đã có trong wishlist.");
+    } else {
+      console.error("Failed to toggle favorite:", e);
+    }
   }
 };
+
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -197,9 +208,13 @@ React.useEffect(() => {
               />
             </div>
             <div className="lg:col-span-3">
-              {loading && <p>Đang tải sản phẩm...</p>}
-              {error && <p className="text-red-500">{error}</p>}
-              {!loading && !error && (
+              {(loading || wishlistLoading) && <p>Đang tải sản phẩm...</p>}
+              <p className="text-red-500">
+                {typeof error === "string" ? error : ""}
+                {typeof wishlistError === "string" ? wishlistError : ""}
+              </p>
+
+              {!loading && !error && !wishlistLoading && !wishlistError && (
                 <ProductGrid
                   products={products}
                   totalResults={totalResults}

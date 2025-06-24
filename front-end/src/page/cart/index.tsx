@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../../components/layout/header/header';
 import Footer from '../../components/layout/footer/footer';
 import HeroSection from '../../components/common/HeroSection';
@@ -9,6 +10,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import { CartDetailResponse } from '../../types/Cart';
 
 const CartCheckOut: React.FC = () => {
+  const navigate = useNavigate();
+
   const { token } = useAuth(); // Giả sử AuthContext trả về token
   const { carts, fetchCartDetails, removeCart, loading } = useCart(token || '');
 
@@ -58,8 +61,9 @@ const CartCheckOut: React.FC = () => {
   };
 
   const handleProceedToCheckout = () => {
-    alert('Đang chuyển đến trang thanh toán...');
-  };
+  navigate('/checkout');
+};
+
 
   return (
     <div className="min-h-screen flex flex-col">

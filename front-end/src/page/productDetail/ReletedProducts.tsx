@@ -4,7 +4,7 @@ import { RelatedProduct } from "../../types/ProductDetail";
 
 interface RelatedProductsProps {
   products: RelatedProduct[];
-  onToggleFavorite: (id: string) => void;
+  onToggleFavorite: (id: number) => void;
 }
 
 const RelatedProducts: React.FC<RelatedProductsProps> = ({
@@ -19,17 +19,13 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({
         {products.map((product) => (
           <Card
             key={product.id}
+            id={Number(product.id)}
             image={product.image}
             title={product.name}
             price={product.price.toLocaleString()} // convert number → string
             isFavorite={product.isFavorite}
-            onAddToWishlist={() => onToggleFavorite(product.id)}
+            onFavoriteToggle={onToggleFavorite}
           />
-          //   <Card
-          //     key={product.id}
-          //     product={product}
-          //     onToggleFavorite={onToggleFavorite}
-          //   />
         ))}
       </div>
     </div>

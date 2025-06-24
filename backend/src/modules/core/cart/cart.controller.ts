@@ -84,6 +84,7 @@ export class CartController {
   })
   async getAllCart(
     @Query() cart: GetAllCartsDTO,
+    @GetUser() user: JwtPayload, // 👈 Lấy user từ token
   ): Promise<ApiResponse<Cart[]>> {
     const carts = await this.cartService.getAllCarts(cart);
     this.logger.debug(`Cart: ${JSON.stringify(carts)}`);
@@ -95,38 +96,45 @@ export class CartController {
     };
   }
 
-  @Get('id/:id')
-  @HasRole(Role.USER)
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Lấy giỏ hàng theo ID' })
-  @ApiParam({ name: 'id', type: Number, description: 'Order ID' })
-  @ApiOkResponse({ type: ApiResponse, description: 'Lấy giỏ hàng thành công' })
-  async getCartById(@Param() cart: FindCartById): Promise<ApiResponse<Cart>> {
-    const carts = await this.cartService.getCartsById(cart.id);
-    this.logger.debug(`Cart: ${JSON.stringify(carts)}`);
+@Get('id/:id')
+@HasRole(Role.USER)
+@HttpCode(HttpStatus.OK)
+@ApiOperation({ summary: 'Lấy giỏ hàng theo ID' })
+@ApiParam({ name: 'id', type: Number, description: 'Order ID' })
+@ApiOkResponse({ type: ApiResponse, description: 'Lấy giỏ hàng thành công' })
+async getCartById(
+  @Param() cart: FindCartById,
+  @GetUser() user: JwtPayload,  // Lấy userId từ token
+): Promise<ApiResponse<Cart>> {
+  const carts = await this.cartService.getCartsById(cart.id, user.sub);
+  this.logger.debug(`Cart: ${JSON.stringify(carts)}`);
 
-    return {
-      statusCode: HttpStatus.OK,
-      message: NotifyMessage.GET_CART_SUCCESSFUL,
-      data: carts,
-    };
-  }
+  return {
+    statusCode: HttpStatus.OK,
+    message: NotifyMessage.GET_CART_SUCCESSFUL,
+    data: carts,
+  };
+}
 
-  @Delete('cart/:id')
-  @HasRole(Role.USER)
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Xóa giỏ hàng theo ID' })
-  @ApiParam({ name: 'id', type: Number, description: 'Order ID' })
-  @ApiOkResponse({ type: ApiResponse, description: 'Xóa giỏ hàng thành công' })
-  async removeCart(@Param() cart: RemoveCartDTO): Promise<ApiResponse<Cart>> {
-    const carts = await this.cartService.removeCart(cart);
 
-    return {
-      statusCode: HttpStatus.OK,
-      message: NotifyMessage.GET_CART_SUCCESSFUL,
-      data: carts,
-    };
-  }
+@Delete('cart/:id')
+@HasRole(Role.USER)
+@HttpCode(HttpStatus.OK)
+@ApiOperation({ summary: 'Xóa giỏ hàng theo ID' })
+@ApiParam({ name: 'id', type: Number, description: 'Cart ID' })
+@ApiOkResponse({ type: ApiResponse, description: 'Xóa giỏ hàng thành công' })
+async removeCart(
+  @Param('id') id: number,
+  @GetUser() user: JwtPayload,
+): Promise<ApiResponse<Cart>> {
+  const carts = await this.cartService.removeCart({ cartId: id }, user.sub);
+
+  return {
+    statusCode: HttpStatus.OK,
+    message: NotifyMessage.GET_CART_SUCCESSFUL,
+    data: carts,
+  };
+}
 
   @Get('/cart-detail/get')
   @HasRole(Role.USER)
@@ -179,13 +187,23 @@ export class CartController {
     description: 'Xóa chi tiết giỏ hàng thành công',
   })
   async removeCartByCartId(
-    @Param() { cartId }: RemoveCartDetailDTO,
-  ): Promise<ApiResponse<CartDetail>> {
-    const cartDetail = await this.cartService.removeCartDetailById(cartId);
-    return {
-      statusCode: HttpStatus.OK,
-      message: NotifyMessage.REMOVE_CART_DETAIL_SUCCESSFUL,
-      data: cartDetail,
-    };
-  }
+  @Param('id') id: number
+): Promise<ApiResponse<CartDetail>> {
+  const cartDetail = await this.cartService.removeCartDetailById(id);
+  return {
+    statusCode: HttpStatus.OK,
+    message: NotifyMessage.REMOVE_CART_DETAIL_SUCCESSFUL,
+    data: cartDetail,
+  };
+}
+  // async removeCartByCartId(
+  //   @Param() { cartId }: RemoveCartDetailDTO,
+  // ): Promise<ApiResponse<CartDetail>> {
+  //   const cartDetail = await this.cartService.removeCartDetailById(cartId);
+  //   return {
+  //     statusCode: HttpStatus.OK,
+  //     message: NotifyMessage.REMOVE_CART_DETAIL_SUCCESSFUL,
+  //     data: cartDetail,
+  //   };
+  // }
 }

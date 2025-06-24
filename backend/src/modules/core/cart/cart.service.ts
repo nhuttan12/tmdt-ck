@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, min } from 'drizzle-orm';
 import { MySql2Database } from 'drizzle-orm/mysql2';
 import { Cart, CartDetail, CartInsert } from '@schema-type';
 import { cartDetails, carts, images, productImages, products } from '@schema';
@@ -50,11 +50,11 @@ export class CartService {
     );
   }
 
-  async getCartsById(id: number): Promise<Cart> {
+  async getCartsById(id: number, userId: number): Promise<Cart> {
     return await this.searchService.findOneOrThrow(
       this.db,
       carts,
-      eq(carts.id, id),
+      and(eq(carts.id, id), eq(carts.userId, userId))
     );
   }
 
@@ -138,7 +138,7 @@ export class CartService {
     }
   }
 
-  async removeCart({ cartId }: RemoveCartDTO): Promise<Cart> {
+  async removeCart({ cartId }: RemoveCartDTO, userId: number): Promise<Cart> {
     try {
       const result = await this.db.transaction((tx) =>
         tx
@@ -154,7 +154,7 @@ export class CartService {
         throw new InternalServerErrorException(ErrorMessage.CART_NOT_FOUND);
       }
 
-      return this.getCartsById(cartId);
+      return this.getCartsById(cartId, userId);
     } catch (error) {
       this.logger.error(`Error removing cart ID ${cartId}: ${error}`);
       throw error;
@@ -170,6 +170,13 @@ export class CartService {
   ): Promise<CartDetailResponse[]> {
     const { skip, take } = this.utilityService.getPagination(offset, limit);
     try {
+      // Tạo subquery lấy image url đầu tiên cho mỗi productId
+    const imageSubquery = this.db
+      .select({ imageUrl: images.url })
+      .from(productImages)
+      .innerJoin(images, eq(productImages.imageId, images.id))
+      .where(eq(productImages.productId, products.id))
+      .limit(1);
       const details = await this.db
         .select({
           cartDetailId: cartDetails.id,
@@ -181,8 +188,8 @@ export class CartService {
           productPrice: products.price,
           productStocking: products.stocking,
           productStatus: products.status,
-          // imageUrl: this.db.raw('MAX(images.url)'),
-          imageUrl: images.url,
+          
+          imageUrl: min(images.url),
         })
         .from(cartDetails)
         .innerJoin(products, eq(cartDetails.productId, products.id))
