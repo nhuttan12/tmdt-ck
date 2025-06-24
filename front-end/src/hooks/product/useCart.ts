@@ -23,7 +23,7 @@ export function useCart(token: string) {
         return;
       }
       const cartId = cartsData[0].id;
-      const cartDetailsResponse = await cartService.getCartDetailByCartId(token, cartId);
+     const cartDetailsResponse = await cartService.getCartDetailByCartId(token, cartId, 10, 1);
       const cartDetails = cartDetailsResponse.data || [];
       setCarts(cartDetails);
       const totalQuantity = cartDetails.reduce((sum: number, item:CartDetailResponse) => sum + item.quantity, 0);

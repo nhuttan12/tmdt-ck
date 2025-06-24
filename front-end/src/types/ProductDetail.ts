@@ -38,6 +38,13 @@ export interface ProductDetailResponse {
   stock: number;
 }
 
+export interface RelatedProduct {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  isFavorite?: boolean;
+}
 
 
 
@@ -67,10 +74,3 @@ export interface ProductDetailResponse {
 //   reviews: any[];
 // }
 
-// export interface RelatedProduct {
-//   id: string;
-//   name: string;
-//   price: number;
-//   image: string;
-//   isFavorite?: boolean;
-// }
